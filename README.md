@@ -10,9 +10,15 @@ The local unit will read the databases and present the data to the user through 
 
 ## Main technologies used
 Microcontroller for interfacing with sensors
+
 Single-board computer for reading data from microcontroller and pushing it to the server
+
 Standard desktop computer as the server
+
 Python for most of the logic
+
 Rsync for synchronisation
+
 CherryPy for API web-server (reading databases, data manipulation)
+
 Lighttpd as main and proxying web-server
