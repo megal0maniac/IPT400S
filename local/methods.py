@@ -1,11 +1,12 @@
-#For getting a graph with res data points
-#Loop generates a list, use list to get average for each group and return
+#Graphing methods for dealing with more data points than we want
 
 start = 82
 end = 1416
 res = 100
 int = 300
 
+#For getting a graph with res data points
+#Loop generates a list, use list to get average for each group and return
 for x in range(1,res+1):
   print int(start + x*((end-start)/float(res)))
 
