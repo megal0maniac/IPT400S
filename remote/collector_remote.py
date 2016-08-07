@@ -16,10 +16,7 @@ serial_baud = int(parser.get('collector_remote', 'serial_baud'))
 serial_timeout = int(parser.get('collector_remote', 'serial_timeout'))
 database_path = parser.get('collector_remote', 'database_path')
 
-
-wind_dir = {0 : 'N', 1 : 'NNW', 2 : 'NW', 3 : 'WNW', 4 : 'W', 5 : 'WSW', 6 : 'SW', 7 : 'SSW', 8 : 'S', 9 : 'SSE', 10 : 'SE', 11 : 'ESE', 12 : 'E', 13 : 'ENE', 14 : 'NE', 15 : 'NNE', 16 : 'N'}
-
-#TODO: This should become a variable later, both baud and device
+#wind_dir = {0 : 'N', 1 : 'NNW', 2 : 'NW', 3 : 'WNW', 4 : 'W', 5 : 'WSW', 6 : 'SW', 7 : 'SSW', 8 : 'S', 9 : 'SSE', 10 : 'SE', 11 : 'ESE', 12 : 'E', 13 : 'ENE', 14 : 'NE', 15 : 'NNE', 16 : 'N'}
 ser = serial.Serial(serial_device, serial_baud, timeout=serial_timeout)
 
 def writeToDB(weatherdata):
@@ -33,9 +30,9 @@ def writeToDB(weatherdata):
         #if the file is new, update the currentdb file. Hard-coded to write only the filename minus directory
         f = open('{}currentdb'.format(database_path), 'w')
         if '/' in currentdb:
-            f.write(currentdb.split('/')[1])
+            f.write(currentdb.split('/')[-1])
             print 'folder'
-            print currentdb.split('/')[1]
+            print currentdb.split('/')[-1]
         else:
             f.write(currentdb)
             print 'pwd'
