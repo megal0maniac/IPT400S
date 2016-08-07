@@ -19,6 +19,7 @@ for x in range((end-start)/int, -1, -1):
   print end - x*int
 
 #Parallel list sorting
+#Thanks Nick! http://stackoverflow.com/a/2223828
 perm = sorted(xrange(len(foo)), key=lambda x:foo[x])
 for p in perm:
   print "%s: %s" % (foo[p], bar[p])
