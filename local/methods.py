@@ -23,3 +23,13 @@ for x in range((end-start)/int, -1, -1):
 perm = sorted(xrange(len(foo)), key=lambda x:foo[x])
 for p in perm:
   print "%s: %s" % (foo[p], bar[p])
+
+#Get range of days from two timestamps
+from datetime import date, timedelta
+
+end = date.fromtimestamp(1472969203)
+start = date.fromtimestamp(1462969203)
+delta = end - start
+
+for i in range(delta.days + 1):
+  print '{}.db'.format(start + timedelta(days=i))
