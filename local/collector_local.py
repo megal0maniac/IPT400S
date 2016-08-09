@@ -6,6 +6,7 @@ from random import random
 
 parser = SafeConfigParser()
 parser.read('collector_local.conf')
+
 listen_ip = parser.get('collector_local', 'listen_ip')
 listen_port = int(parser.get('collector_local', 'listen_port'))
 
@@ -26,7 +27,7 @@ def fetchData(start, end):
         for i in range(delta.days + 1):
             dblist.append('{}.db'.format(startdate + timedelta(days=i)))
 
-    return str(dblist)
+    return '{}<br>{}'.format(dblist, len(dblist))
 
 class HelloWorld(object):
     @cherrypy.expose
@@ -34,8 +35,14 @@ class HelloWorld(object):
       return '{ "var1":"%d", "var2":"%d", "var3":"%d", "var4":"%d"}' % (int(random()*34), int(random()*33), int(random()*33), int(random()*33))
     
     @cherrypy.expose
-    def submit (self, **vars):
+    def getdaterange (self, **vars):
         return fetchData(int(vars['start']), int(vars['end']))
+
+    @cherrypy.expose
+    def submit (self, **vars):
+        print 'Submitted vars:'
+        for x in vars:
+            print '{}: {}\tType: {}\tLength: {}'.format(x, vars[x], type(vars[x]), len(vars[x]))
 
 cherrypy.quickstart(HelloWorld(), '/api')
 
