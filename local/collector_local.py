@@ -6,6 +6,7 @@ from datetime import date, timedelta, datetime
 from ConfigParser import SafeConfigParser
 import cherrypy
 from random import random
+from time import time
 
 parser = SafeConfigParser()
 parser.read('collector_local.conf')
@@ -35,9 +36,11 @@ def querydb(dbname, start, end):
 
     global queryData
     queryData.extend(data)
+    conn.close()
 
 def fetchData(start, end):
     # Generate a list of all required database files to be read
+    timethen = time()
     dblist = []
     startdate = date.fromtimestamp(start)
     enddate = date.fromtimestamp(end)
@@ -66,21 +69,24 @@ def fetchData(start, end):
         threads.append(t)
         t.start()
     
-    main_thread = threading.currentThread()
     for t in threads:
-        if t is main_thread:
-            print 'main thread is a thing'
-            continue
         print 'joining thread {}'.format(t)
         t.join()
     
-    print 'Done with collection'
+    print 'Done with collection, sorting...'
+    print len(queryData)
+
+    queryDataSorted = []
+    perm = sorted(xrange(len(queryData)), key=lambda x:queryData[x]['timestamp'])
+    for p in perm:
+        queryDataSorted.append({'timestamp' : queryData[p]['timestamp'], 'windspeed' : queryData[p]['windspeed'], 'winddirection' : queryData[p]['winddirection'], 'temperature' : queryData[p]['temperature'], 'humidity' : queryData[p]['humidity'], 'rain' : queryData[p]['rain'] })
 
     output = '<table border=1><tr><th>Time</th><th>Windspeed</th><th>Wind direction</th><th>Temperature</th><th>Humidity</th><th>Rainfall</th></tr>'
-    for x in queryData:
+    for x in queryDataSorted:
         output = output + '<tr><td>{}</td><td>{}</td><td>{}</td><td>{}</td><td>{}</td><td>{}</td></tr>'.format(datetime.fromtimestamp(x['timestamp']).strftime('%Y-%m-%d %H:%M:%S'), x['windspeed'], x['winddirection'], x['temperature'], x['humidity'], x['rain'])
 
     output = output + '</table>'
+    print time() - timethen
     return output
 
 class HelloWorld(object):
