@@ -33,3 +33,11 @@ delta = end - start
 
 for i in range(delta.days + 1):
   print '{}.db'.format(start + timedelta(days=i))
+
+#List comprehension to get specific parameter from dataset
+#Generates list [2, 5, 8]
+data = []
+data.append({'one':1, 'two':2, 'three':3})
+data.append({'one':4, 'two':5, 'three':6})
+data.append({'one':7, 'two':8, 'three':9})
+test = [data[x]['two'] for x in range(0,len(data))]

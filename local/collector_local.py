@@ -18,10 +18,10 @@ cherrypy.config.update({'server.socket_host': listen_ip,
                         'server.socket_port': listen_port,
                        })
 
+cardinal_points = ['N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE', 'S', 'SSW', 'SW', 'WSW', 'W', 'WNW', 'NW', 'NNW']
 queryData = []
 
 def querydb(dbname, start, end):
-    print 'Querying {} for range {} - {}'.format(dbname, start, end)
     data = []
     # TODO: Catch filenotfound exception
     if not os.path.exists('db/{}'.format(dbname)):
@@ -70,22 +70,21 @@ def fetchData(start, end):
         t.start()
     
     for t in threads:
-        print 'joining thread {}'.format(t)
         t.join()
     
-    print 'Done with collection, sorting...'
-    print len(queryData)
-
     queryDataSorted = []
     perm = sorted(xrange(len(queryData)), key=lambda x:queryData[x]['timestamp'])
     for p in perm:
         queryDataSorted.append({'timestamp' : queryData[p]['timestamp'], 'windspeed' : queryData[p]['windspeed'], 'winddirection' : queryData[p]['winddirection'], 'temperature' : queryData[p]['temperature'], 'humidity' : queryData[p]['humidity'], 'rain' : queryData[p]['rain'] })
 
+#    return '{{"time": {}, "temp": {}, "humidity": {} }}'.format(str([datetime.fromtimestamp(queryDataSorted[x]['timestamp']).strftime('%Y-%m-%d %H:%M:%S') for x in range(0,len(queryDataSorted))]), str([queryDataSorted[x]['temperature'] for x in range(0,len(queryDataSorted))]), str([queryDataSorted[x]['humidity'] for x in range(0,len(queryDataSorted))])).replace('\'', '"')
+
     output = '<table border=1><tr><th>Time</th><th>Windspeed</th><th>Wind direction</th><th>Temperature</th><th>Humidity</th><th>Rainfall</th></tr>'
     for x in queryDataSorted:
-        output = output + '<tr><td>{}</td><td>{}</td><td>{}</td><td>{}</td><td>{}</td><td>{}</td></tr>'.format(datetime.fromtimestamp(x['timestamp']).strftime('%Y-%m-%d %H:%M:%S'), x['windspeed'], x['winddirection'], x['temperature'], x['humidity'], x['rain'])
+        output = output + '<tr><td>{}</td><td>{}km/h</td><td>{}</td><td>{}C</td><td>{}%</td><td>{}mm</td></tr>'.format(datetime.fromtimestamp(x['timestamp']).strftime('%Y-%m-%d %H:%M:%S'), x['windspeed'], cardinal_points[x['winddirection']], x['temperature'], x['humidity'], x['rain'])
 
     output = output + '</table>'
+
     print time() - timethen
     return output
 
@@ -96,7 +95,10 @@ class HelloWorld(object):
     
     @cherrypy.expose
     def getdaterange (self, **vars):
-        return fetchData(int(vars['start']), int(vars['end']))
+        if len(vars) == 0:
+            return fetchData(int(time())-600, int(time()))
+        else:
+            return fetchData(int(vars['start']), int(vars['end']))
 
     @cherrypy.expose
     def submit (self, **vars):
