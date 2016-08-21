@@ -18,6 +18,7 @@ database_path = parser.get('collector_remote', 'database_path')
 
 #wind_dir = {0 : 'N', 1 : 'NNW', 2 : 'NW', 3 : 'WNW', 4 : 'W', 5 : 'WSW', 6 : 'SW', 7 : 'SSW', 8 : 'S', 9 : 'SSE', 10 : 'SE', 11 : 'ESE', 12 : 'E', 13 : 'ENE', 14 : 'NE', 15 : 'NNE', 16 : 'N'}
 ser = serial.Serial(serial_device, serial_baud, timeout=serial_timeout)
+print 'Starting collector daemon...'
 
 def writeToDB(weatherdata):
     today = date.fromtimestamp(weatherdata['time'])
