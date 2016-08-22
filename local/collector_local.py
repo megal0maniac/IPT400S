@@ -76,29 +76,44 @@ def fetchData(start, end):
     perm = sorted(xrange(len(queryData)), key=lambda x:queryData[x]['timestamp'])
     for p in perm:
         queryDataSorted.append({'timestamp' : queryData[p]['timestamp'], 'windspeed' : queryData[p]['windspeed'], 'winddirection' : queryData[p]['winddirection'], 'temperature' : queryData[p]['temperature'], 'humidity' : queryData[p]['humidity'], 'rain' : queryData[p]['rain'] })
-
+    print time() - timethen
+    return queryDataSorted
 #    return '{{"time": {}, "temp": {}, "humidity": {} }}'.format(str([datetime.fromtimestamp(queryDataSorted[x]['timestamp']).strftime('%Y-%m-%d %H:%M:%S') for x in range(0,len(queryDataSorted))]), str([queryDataSorted[x]['temperature'] for x in range(0,len(queryDataSorted))]), str([queryDataSorted[x]['humidity'] for x in range(0,len(queryDataSorted))])).replace('\'', '"')
 
-    output = '<table border=1><tr><th>Time</th><th>Windspeed</th><th>Wind direction</th><th>Temperature</th><th>Humidity</th><th>Rainfall</th></tr>'
-    for x in queryDataSorted:
-        output = output + '<tr><td>{}</td><td>{}km/h</td><td>{}</td><td>{}C</td><td>{}%</td><td>{}mm</td></tr>'.format(datetime.fromtimestamp(x['timestamp']).strftime('%Y-%m-%d %H:%M:%S'), x['windspeed'], cardinal_points[x['winddirection']], x['temperature'], x['humidity'], x['rain'])
+#    output = '<table border=1><tr><th>Time</th><th>Windspeed</th><th>Wind direction</th><th>Temperature</th><th>Humidity</th><th>Rainfall</th></tr>'
+#    for x in queryDataSorted:
+#        output = output + '<tr><td>{}</td><td>{}km/h</td><td>{}</td><td>{}C</td><td>{}%</td><td>{}mm</td></tr>'.format(datetime.fromtimestamp(x['timestamp']).strftime('%Y-%m-%d %H:%M:%S'), x['windspeed'], cardinal_points[x['winddirection']], x['temperature'], x['humidity'], x['rain'])
 
-    output = output + '</table>'
+#    output = output + '</table>'
 
-    print time() - timethen
-    return output
+#    
+#    return output
 
 class HelloWorld(object):
     @cherrypy.expose
     def index(self):
-      return '{ "var1":"%d", "var2":"%d", "var3":"%d", "var4":"%d"}' % (int(random()*34), int(random()*33), int(random()*33), int(random()*33))
+        return ':)'
     
     @cherrypy.expose
     def getdaterange (self, **vars):
         if len(vars) == 0:
-            return fetchData(int(time())-600, int(time()))
+            return fetchData(int(time())-1800, int(time()))
         else:
             return fetchData(int(vars['start']), int(vars['end']))
+
+    @cherrypy.expose
+    def getdata (self, **vars):
+        if len(vars) == 0:
+            data = fetchData(int(time())-1800, int(time()))
+        else:
+            data = fetchData(int(vars['start']), int(vars['end']))
+        return '{{ "time" : {}, "windspeed" : {}, "winddirection" : {}, "temperature" : {}, "humidity" : {}, "rain" : {} }}'.format(
+            str([datetime.fromtimestamp(data[x]['timestamp']).strftime('%Y-%m-%d %H:%M:%S') for x in range(0,len(data))]),
+            str([data[x]['windspeed'] for x in range(0,len(data))]),
+            str([data[x]['winddirection'] for x in range(0,len(data))]),
+            str([data[x]['temperature'] for x in range(0,len(data))]),
+            str([data[x]['humidity'] for x in range(0,len(data))]),
+            str([data[x]['rain'] for x in range(0,len(data))])).replace('\'', '"')
 
     @cherrypy.expose
     def submit (self, **vars):
