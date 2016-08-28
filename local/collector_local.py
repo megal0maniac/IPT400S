@@ -21,6 +21,14 @@ cherrypy.config.update({'server.socket_host': listen_ip,
 cardinal_points = ['N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE', 'S', 'SSW', 'SW', 'WSW', 'W', 'WNW', 'NW', 'NNW']
 queryData = []
 
+#Only works for numerical values
+def average(avglist, avgkey):
+    if avgkey == None:
+        return sum([avglist[x] for x in range(0, len(avglist))])/len(avglist)
+    else:
+        return sum([avglist[x][avgkey] for x in range(0, len(avglist))])/len(avglist)
+
+
 def querydb(dbname, start, end):
     data = []
     # TODO: Catch filenotfound exception
@@ -78,16 +86,7 @@ def fetchData(start, end):
         queryDataSorted.append({'timestamp' : queryData[p]['timestamp'], 'windspeed' : queryData[p]['windspeed'], 'winddirection' : queryData[p]['winddirection'], 'temperature' : queryData[p]['temperature'], 'humidity' : queryData[p]['humidity'], 'rain' : queryData[p]['rain'] })
     print time() - timethen
     return queryDataSorted
-#    return '{{"time": {}, "temp": {}, "humidity": {} }}'.format(str([datetime.fromtimestamp(queryDataSorted[x]['timestamp']).strftime('%Y-%m-%d %H:%M:%S') for x in range(0,len(queryDataSorted))]), str([queryDataSorted[x]['temperature'] for x in range(0,len(queryDataSorted))]), str([queryDataSorted[x]['humidity'] for x in range(0,len(queryDataSorted))])).replace('\'', '"')
 
-#    output = '<table border=1><tr><th>Time</th><th>Windspeed</th><th>Wind direction</th><th>Temperature</th><th>Humidity</th><th>Rainfall</th></tr>'
-#    for x in queryDataSorted:
-#        output = output + '<tr><td>{}</td><td>{}km/h</td><td>{}</td><td>{}C</td><td>{}%</td><td>{}mm</td></tr>'.format(datetime.fromtimestamp(x['timestamp']).strftime('%Y-%m-%d %H:%M:%S'), x['windspeed'], cardinal_points[x['winddirection']], x['temperature'], x['humidity'], x['rain'])
-
-#    output = output + '</table>'
-
-#    
-#    return output
 
 class HelloWorld(object):
     @cherrypy.expose
@@ -104,7 +103,7 @@ class HelloWorld(object):
     @cherrypy.expose
     def getdata (self, **vars):
         if len(vars) == 0:
-            data = fetchData(int(time())-1800, int(time()))
+            data = fetchData(int(time())-86400, int(time()))
         else:
             data = fetchData(int(vars['start']), int(vars['end']))
         return '{{ "time" : {}, "windspeed" : {}, "winddirection" : {}, "temperature" : {}, "humidity" : {}, "rain" : {} }}'.format(
