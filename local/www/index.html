@@ -55,7 +55,8 @@
       </div>
       
       Some more text here
-    <div id="graph1""></div>
+    <div id="tempgraph"></div>
+    <div id="humgraph"></div>
     </div><!-- /.container -->
 
     <!-- Bootstrap core JavaScript
@@ -66,30 +67,27 @@
     <script src="js/plotly-latest.min.js"></script>
     <script>
     $( document ).ready(function() {  
-    //jsondata = JSON.parse($.get("/api/getdata").responseText)
-    var graphdata;
-    $.get("/api/getdata?start=1471633200&end=1471872364", function(data){
-    graphdata = [
+    $.get("/api/getdata", function(data){
+    tempgraphdata = [
       {
         x: JSON.parse(data)["time"],
-        y: JSON.parse(data)["rain"],
+        y: JSON.parse(data)["temperature"],
         type: 'scatter'
       }
     ]
 
-    Plotly.newPlot('graph1', graphdata);
-
-    });
-
-/*    var data = [
+    humgraphdata = [
       {
-        x: jsondata["time"],
-        y: jsondata["temperature"],
+        x: JSON.parse(data)["time"],
+        y: JSON.parse(data)["humidity"],
         type: 'scatter'
       }
-    ];
-*/
-    
+    ]
+
+    Plotly.newPlot('tempgraph', tempgraphdata);
+    Plotly.newPlot('humgraph', humgraphdata);
+    });
+
     });
     </script>
   </body>
