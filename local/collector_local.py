@@ -92,11 +92,11 @@ def fetchData(start, end):
         queryDataAveraged = []
         for x in range(0,res):
             queryDataAveraged.append({'timestamp' : int(average([queryDataSorted[y]['timestamp'] for y in range(int(x*((len(queryDataSorted)+1.0)/res)),int((x+1)*((len(queryDataSorted)+1.0)/res))-1)])),
-                                    'windspeed' : average([queryDataSorted[y]['windspeed'] for y in range(int(x*((len(queryDataSorted)+1.0)/res)),int((x+1)*((len(queryDataSorted)+1.0)/res))-1)]),
+                                    'windspeed' : '{0:.2f}'.format(average([queryDataSorted[y]['windspeed'] for y in range(int(x*((len(queryDataSorted)+1.0)/res)),int((x+1)*((len(queryDataSorted)+1.0)/res))-1)])),
                                     'winddirection' : int(average([queryDataSorted[y]['winddirection'] for y in range(int(x*((len(queryDataSorted)+1.0)/res)),int((x+1)*((len(queryDataSorted)+1.0)/res))-1)])),
-                                    'temperature' : average([queryDataSorted[y]['temperature'] for y in range(int(x*((len(queryDataSorted)+1.0)/res)),int((x+1)*((len(queryDataSorted)+1.0)/res))-1)]),
-                                    'humidity' : average([queryDataSorted[y]['humidity'] for y in range(int(x*((len(queryDataSorted)+1.0)/res)),int((x+1)*((len(queryDataSorted)+1.0)/res))-1)]),
-                                    'rain' : int(average([queryDataSorted[y]['rain'] for y in range(int(x*((len(queryDataSorted)+1.0)/res)),int((x+1)*((len(queryDataSorted)+1.0)/res))-1)]))})
+                                    'temperature' : '{0:.2f}'.format(average([queryDataSorted[y]['temperature'] for y in range(int(x*((len(queryDataSorted)+1.0)/res)),int((x+1)*((len(queryDataSorted)+1.0)/res))-1)])),
+                                    'humidity' : '{0:.2f}'.format(average([queryDataSorted[y]['humidity'] for y in range(int(x*((len(queryDataSorted)+1.0)/res)),int((x+1)*((len(queryDataSorted)+1.0)/res))-1)])),
+                                    'rain' : average([queryDataSorted[y]['rain'] for y in range(int(x*((len(queryDataSorted)+1.0)/res)),int((x+1)*((len(queryDataSorted)+1.0)/res))-1)])})
         print time() - timethen
         return queryDataAveraged
 
@@ -118,7 +118,7 @@ class HelloWorld(object):
     @cherrypy.expose
     def getdata (self, **vars):
         if len(vars) == 0:
-            data = fetchData(int(time())-604800, int(time()))
+            data = fetchData(int(time())-1300000, int(time()))
         else:
             data = fetchData(int(vars['start']), int(vars['end']))
         return '{{ "time" : {}, "windspeed" : {}, "winddirection" : {}, "temperature" : {}, "humidity" : {}, "rain" : {} }}'.format(
@@ -127,7 +127,7 @@ class HelloWorld(object):
             str([data[x]['winddirection'] for x in range(0,len(data))]),
             str([data[x]['temperature'] for x in range(0,len(data))]),
             str([data[x]['humidity'] for x in range(0,len(data))]),
-            str([data[x]['rain'] for x in range(0,len(data))])).replace('\'', '"')
+            str(sum([data[x]['rain'] for x in range(0,len(data))]))).replace('\'', '"')
 
     @cherrypy.expose
     def submit (self, **vars):
