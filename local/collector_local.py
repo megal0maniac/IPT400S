@@ -13,7 +13,7 @@ parser.read('collector_local.conf')
 
 listen_ip = parser.get('collector_local', 'listen_ip')
 listen_port = int(parser.get('collector_local', 'listen_port'))
-
+res = int(parser.get('collector_local', 'maxres'))
 cherrypy.config.update({'server.socket_host': listen_ip,
                         'server.socket_port': listen_port,
                        })
@@ -22,12 +22,12 @@ cardinal_points = ['N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE', 'S', 'SSW',
 queryData = []
 
 #Only works for numerical values
-def average(avglist, avgkey):
-    if avgkey == None:
-        return sum([avglist[x] for x in range(0, len(avglist))])/len(avglist)
-    else:
-        return sum([avglist[x][avgkey] for x in range(0, len(avglist))])/len(avglist)
+def average(avglist):
+    return sum([avglist[x] for x in range(0, len(avglist))])/len(avglist)
 
+
+def blockaverage(blavglist, blavgkey):
+    return average([blavglist[x][blavgkey] for x in range(int(x*((len(blavglist)+1.0)/res)),int((x+1)*((len(blavglist)+1.0)/res)))])
 
 def querydb(dbname, start, end):
     data = []
@@ -84,7 +84,22 @@ def fetchData(start, end):
     perm = sorted(xrange(len(queryData)), key=lambda x:queryData[x]['timestamp'])
     for p in perm:
         queryDataSorted.append({'timestamp' : queryData[p]['timestamp'], 'windspeed' : queryData[p]['windspeed'], 'winddirection' : queryData[p]['winddirection'], 'temperature' : queryData[p]['temperature'], 'humidity' : queryData[p]['humidity'], 'rain' : queryData[p]['rain'] })
-    print time() - timethen
+    
+
+#Average here
+
+    if len(queryDataSorted) > res:
+        queryDataAveraged = []
+        for x in range(0,res):
+            queryDataAveraged.append({'timestamp' : int(average([queryDataSorted[y]['timestamp'] for y in range(int(x*((len(queryDataSorted)+1.0)/res)),int((x+1)*((len(queryDataSorted)+1.0)/res))-1)])),
+                                    'windspeed' : average([queryDataSorted[y]['windspeed'] for y in range(int(x*((len(queryDataSorted)+1.0)/res)),int((x+1)*((len(queryDataSorted)+1.0)/res))-1)]),
+                                    'winddirection' : int(average([queryDataSorted[y]['winddirection'] for y in range(int(x*((len(queryDataSorted)+1.0)/res)),int((x+1)*((len(queryDataSorted)+1.0)/res))-1)])),
+                                    'temperature' : average([queryDataSorted[y]['temperature'] for y in range(int(x*((len(queryDataSorted)+1.0)/res)),int((x+1)*((len(queryDataSorted)+1.0)/res))-1)]),
+                                    'humidity' : average([queryDataSorted[y]['humidity'] for y in range(int(x*((len(queryDataSorted)+1.0)/res)),int((x+1)*((len(queryDataSorted)+1.0)/res))-1)]),
+                                    'rain' : int(average([queryDataSorted[y]['rain'] for y in range(int(x*((len(queryDataSorted)+1.0)/res)),int((x+1)*((len(queryDataSorted)+1.0)/res))-1)]))})
+        print time() - timethen
+        return queryDataAveraged
+
     return queryDataSorted
 
 
@@ -103,7 +118,7 @@ class HelloWorld(object):
     @cherrypy.expose
     def getdata (self, **vars):
         if len(vars) == 0:
-            data = fetchData(int(time())-86400, int(time()))
+            data = fetchData(int(time())-604800, int(time()))
         else:
             data = fetchData(int(vars['start']), int(vars['end']))
         return '{{ "time" : {}, "windspeed" : {}, "winddirection" : {}, "temperature" : {}, "humidity" : {}, "rain" : {} }}'.format(
