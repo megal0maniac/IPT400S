@@ -13,9 +13,16 @@
 
     <!-- Bootstrap core CSS -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/bootstrap-datetimepicker.min.css" rel="stylesheet">
 
     <!-- Custom styles for this template -->
     <link href="css/starter-template.css" rel="stylesheet">
+
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/plotly-latest.min.js"></script>
+    <script src="js/moment.min.js"></script>
+    <script src="js/bootstrap-datetimepicker.min.js"></script>
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
@@ -50,24 +57,68 @@
     <div class="container">
 
       <div class="starter-template">
-        <h1>Bootstrap starter template</h1>
-        <p class="lead">Use this document as a way to quickly start any new project.<br> All you get is this text and a mostly barebones HTML document.</p>
+        <h1>Weather</h1>
+        <p class="lead">Temperature and humidity</p>
       </div>
-      
-      Some more text here
+    
+    <div class="container">
+	    <div class='col-md-5'>
+	        <div class="form-group">
+	            <div class='input-group date' id='startdate'>
+	                <input type='text' class="form-control" />
+	                <span class="input-group-addon">
+	                    <span class="glyphicon glyphicon-calendar"></span>
+	                </span>
+	            </div>
+	        </div>
+	    </div>
+	    <div class='col-md-5'>
+	        <div class="form-group">
+	            <div class='input-group date' id='enddate'>
+	                <input type='text' class="form-control" />
+	                <span class="input-group-addon">
+	                    <span class="glyphicon glyphicon-calendar"></span>
+	                </span>
+	            </div>
+	        </div>
+	    </div>
+	    <button type="button" class="btn btn-primary" id="getweather" > Submit </button>
+	</div>
+
+	<script type="text/javascript">
+	    $(function () {
+	        $('#startdate').datetimepicker();
+	        $('#enddate').datetimepicker({
+				useCurrent: false //Important! See issue #1075
+	        });
+	        $("#startdate").on("dp.change", function (e) {
+	            $('#enddate').data("DateTimePicker").minDate(e.date);
+	        });
+	        $("#enddate").on("dp.change", function (e) {
+	            $('#startdate').data("DateTimePicker").maxDate(e.date);
+	        });
+	    });
+	</script>
+
     <div id="tempgraph"></div>
     <div id="humgraph"></div>
     </div><!-- /.container -->
-
-    <!-- Bootstrap core JavaScript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script src="js/jquery.min.js"></script>
-    <script src="js/bootstrap.min.js"></script>
-    <script src="js/plotly-latest.min.js"></script>
+    
     <script>
-    $( document ).ready(function() {  
-    $.get("/api/getdata", function(data){
+    $("#getweather").click(function() {
+    	makegraph($('#startdate').data("DateTimePicker").date().unix(), $('#enddate').data("DateTimePicker").date().unix())
+    })
+    </script>
+
+    <script>
+    $( document ).ready(function() {
+    	makegraph(moment().unix()-86400, moment().unix());
+    });
+    </script>
+
+    <script>
+    function makegraph(graphstart, graphend) {
+    $.post("/api/getdata?start="+ graphstart +"&end=" + graphend, function(data){
     tempgraphdata = [
       {
         x: JSON.parse(data)["time"],
@@ -87,8 +138,7 @@
     Plotly.newPlot('tempgraph', tempgraphdata);
     Plotly.newPlot('humgraph', humgraphdata);
     });
-
-    });
+};
     </script>
   </body>
 </html>
