@@ -72,9 +72,11 @@
 </div>
 
 <button type="button" class="btn btn-primary" id="getweather" > Submit </button>
-<h2>Temperature</h2>
+<h3>Rain</h3>
+<div id="rain"></div>
+<h3>Temperature</h3>
 <div id="tempgraph"></div>
-<h2>Humidity</h2>
+<h3>Humidity</h3>
 <div id="humgraph"></div>
 </div><!-- /.container -->
 
@@ -132,6 +134,7 @@ function makegraph(graphstart, graphend) {
       type: 'scatter'
     }
     ]
+    $("#rain").text(JSON.parse(data)["rain"] + "mm")
 
     Plotly.newPlot('tempgraph', tempgraphdata);
     Plotly.newPlot('humgraph', humgraphdata);
