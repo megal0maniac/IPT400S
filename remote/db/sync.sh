@@ -5,4 +5,4 @@ DBPATHLOCAL="/tmp/db"
 BASEPATHREMOTE="/home/btech/IPT400S"
 
 sleep 1
-rsync -avc -e "ssh -v" $DBPATHLOCAL/$(cat currentdb) $REMOTEUSER@$REMOTEHOST:$BASEPATHREMOTE/local/db
+rsync -avc -e "ssh -v" $DBPATHLOCAL/$(cat $DBPATHLOCAL/currentdb) $REMOTEUSER@$REMOTEHOST:$BASEPATHREMOTE/local/db
