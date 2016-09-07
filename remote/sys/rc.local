@@ -1,6 +1,6 @@
 # Put your custom commands here that should be executed once
 # the system init finished. By default this file does nothing.
-mount /dev/sda1 /data && rsync -a /data/db/$(cat /data/db/currentdb) /tmp/db/  || /bin/true
+mount /dev/sda1 /data && rsync -a /data/db/$(cat /data/db/currentdb) /tmp/db/ && rsync -a /data/db/currentdb /tmp/db/|| /bin/true
 cd /root/IPT400S/remote && screen -dmS collect python collector_remote.py
 mount /dev/sda1 /data
 exit 0
