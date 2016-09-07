@@ -9,7 +9,7 @@
   <meta name="description" content="">
   <meta name="author" content="Michael Rodger">
 
-  <title>Starter Template for Bootstrap</title>
+  <title>Weather Station</title>
 
   <link href="css/bootstrap.min.css" rel="stylesheet">
   <link href="css/bootstrap-datetimepicker.min.css" rel="stylesheet">
@@ -27,13 +27,13 @@
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
         </button>
-        <a class="navbar-brand" href="#">Project name</a>
+        <a class="navbar-brand" href="#">Weather Station</a>
       </div>
       <div id="navbar" class="collapse navbar-collapse">
         <ul class="nav navbar-nav">
           <li class="active"><a href="#">Home</a></li>
-          <li><a href="#about">About</a></li>
-          <li><a href="#contact">Contact</a></li>
+<!--          <li><a href="#about">About</a></li> -->
+<!--          <li><a href="#contact">Contact</a></li> -->
         </ul>
       </div><!--/.nav-collapse -->
     </div>
@@ -43,7 +43,7 @@
 
     <div class="starter-template">
       <h1>Weather</h1>
-      <p class="lead">Temperature and humidity</p>
+      <p class="lead">Rain, temperature and humidity (24 hours)</p>
     </div>
     
     <div class="container">
@@ -72,12 +72,14 @@
 </div>
 
 <button type="button" class="btn btn-primary" id="getweather" > Submit </button>
-<h3>Rain</h3>
+<h3>Rain (cumulative)</h3>
 <div id="rain"></div>
 <h3>Temperature</h3>
 <div id="tempgraph"></div>
 <h3>Humidity</h3>
 <div id="humgraph"></div>
+<h3>Wind</h3>
+<div id="windgraph"></div>
 </div><!-- /.container -->
 
 <script src="js/jquery.min.js"></script>
@@ -131,13 +133,29 @@ function makegraph(graphstart, graphend) {
     {
       x: JSON.parse(data)["time"],
       y: JSON.parse(data)["humidity"],
-      type: 'scatter'
+      type: 'scatter',
+      line: {
+          color: 'rgb(255, 200, 0)'
+      }
     }
     ]
+
+     windgraphdata = [
+    {
+      x: JSON.parse(data)["time"],
+      y: JSON.parse(data)["windspeed"],
+      type: 'scatter',
+      line: {
+          color: 'rgb(80, 250, 0)'
+      }
+    }
+    ]
+
     $("#rain").text(JSON.parse(data)["rain"] + "mm")
 
     Plotly.newPlot('tempgraph', tempgraphdata);
     Plotly.newPlot('humgraph', humgraphdata);
+    Plotly.newPlot('windgraph', windgraphdata);
   });
 };
 </script>
