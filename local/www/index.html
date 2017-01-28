@@ -5,11 +5,10 @@
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
 	<meta name="description" content="">
 	<meta name="author" content="Michael Rodger">
 
-	<title>Weather Station</title>
+	<title>Weather Station User Interface</title>
 
 	<link href="css/bootstrap.min.css" rel="stylesheet">
 	<link href="css/bootstrap-datetimepicker.min.css" rel="stylesheet">
@@ -43,7 +42,7 @@
 
 		<div class="starter-template">
 			<h1>Weather</h1>
-			<p class="lead">Rain, temperature and humidity (24 hours)</p>
+			<p class="lead">Temperature, humidity, rainfall and windspeed</p>
 		</div>
 
 		<div class="container">
@@ -74,6 +73,7 @@
 		<button type="button" class="btn btn-primary" id="getweather" > Submit </button>
 		<div id="temphumgraph"></div>
 		<!--h3>Rain (hourly)</h3-->
+		<center><h4 id="raintotal"></h4><br></center>
 		<div id="raingraph"></div>
 		<!--h3>Wind</h3-->
 		<div id="windgraph"></div>
@@ -161,6 +161,8 @@
 					}
 				}
 				];
+
+				$('#raintotal').html("Total rainfall (for original query): " + JSON.parse(data)["raintotal"] + "mm");
 
 				layoutTempHum = {
 					title: 'Temperature and humidity',
