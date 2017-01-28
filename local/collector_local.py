@@ -164,14 +164,15 @@ class Collector(object):
         else:
             dataall = fetchAllData(int(vars['start']), int(vars['end']))
             datahourly = fetchAggregatedData(int(vars['start']), int(vars['end']))
-        return '{{ "time" : {}, "timehourly" : {}, "windspeed" : {}, "winddirection" : {}, "temperature" : {}, "humidity" : {}, "rain" : {} }}'.format(
+        return '{{ "time" : {}, "timehourly" : {}, "windspeed" : {}, "winddirection" : {}, "temperature" : {}, "humidity" : {}, "rain" : {}, "raintotal" : {} }}'.format(
             str([datetime.fromtimestamp(dataall[x]['timestamp']).strftime('%Y-%m-%d %H:%M:%S') for x in range(0,len(dataall))]),
             str([datetime.fromtimestamp(datahourly[x]['timestamp']).strftime('%Y-%m-%d %H:%M:%S') for x in range(0,len(datahourly))]),
             str([dataall[x]['windspeed'] for x in range(0,len(dataall))]),
             str([dataall[x]['winddirection'] for x in range(0,len(dataall))]),
             str([dataall[x]['temperature'] for x in range(0,len(dataall))]),
             str([dataall[x]['humidity'] for x in range(0,len(dataall))]),
-            str([datahourly[x]['rain'] for x in range(0,len(datahourly))])).replace('\'', '"')
+            str([datahourly[x]['rain'] for x in range(0,len(datahourly))]),
+            str(sum([datahourly[x]['rain'] for x in range(0,len(datahourly))]))).replace('\'', '"')
 
     @cherrypy.expose
     def submit (self, **vars):
