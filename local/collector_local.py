@@ -47,7 +47,7 @@ def querydball(dbname, start, end):
     queryData.extend(data)
     conn.close()
 
-def querydbhourly(dbname, start, end):
+def querydbaggregated(dbname, start, end, ):
     data = []
     # TODO: Catch filenotfound exception
     if not os.path.exists('db/{}'.format(dbname)):
@@ -78,7 +78,7 @@ def getdblist(start, end):
 
     return dblist
 
-def fetchHourlyData(start, end):
+def fetchAggregatedData(start, end):
     dblist = getdblist(start, end)
     print str(dblist)
 
@@ -93,7 +93,7 @@ def fetchHourlyData(start, end):
     queryData = []
     threads = []
     while not q.empty():
-        t = threading.Thread(target=querydbhourly, args=(q.get(), start, end,))
+        t = threading.Thread(target=querydbaggregated, args=(q.get(), start, end,))
         threads.append(t)
         t.start()
     
@@ -160,10 +160,10 @@ class Collector(object):
     def getdata (self, **vars):
         if len(vars) == 0: #Default to last 24 hours
             dataall = fetchAllData(int(time())-86400, int(time()))
-            datahourly = fetchHourlyData(int(time())-86400, int(time()))
+            datahourly = fetchAggregatedData(int(time())-86400, int(time()))
         else:
             dataall = fetchAllData(int(vars['start']), int(vars['end']))
-            datahourly = fetchHourlyData(int(vars['start']), int(vars['end']))
+            datahourly = fetchAggregatedData(int(vars['start']), int(vars['end']))
         return '{{ "time" : {}, "timehourly" : {}, "windspeed" : {}, "winddirection" : {}, "temperature" : {}, "humidity" : {}, "rain" : {} }}'.format(
             str([datetime.fromtimestamp(dataall[x]['timestamp']).strftime('%Y-%m-%d %H:%M:%S') for x in range(0,len(dataall))]),
             str([datetime.fromtimestamp(datahourly[x]['timestamp']).strftime('%Y-%m-%d %H:%M:%S') for x in range(0,len(datahourly))]),
