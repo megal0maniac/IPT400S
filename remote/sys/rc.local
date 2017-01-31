@@ -1,5 +1,5 @@
-# Put your custom commands here that should be executed once
-# the system init finished. By default this file does nothing.
+# This file mounts the data drive, copies the most recently recorded database to the temp directory and starts collecting
+# Michael Rodger 213085208
 mount /dev/sda1 /data && rsync -a /data/db/$(cat /data/db/currentdb) /tmp/db/ && rsync -a /data/db/currentdb /tmp/db/|| /bin/true
 cd /root/IPT400S/remote && screen -dmS collect python collector_remote.py
 mount /dev/sda1 /data

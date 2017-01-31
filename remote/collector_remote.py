@@ -1,3 +1,7 @@
+#Michael Rodger 213085208
+#Cape Peninsula University of Technology
+#January 31 2017
+
 import sqlite3
 import os
 import sys
@@ -16,7 +20,6 @@ serial_baud = int(parser.get('collector_remote', 'serial_baud'))
 serial_timeout = int(parser.get('collector_remote', 'serial_timeout'))
 database_path = parser.get('collector_remote', 'database_path')
 
-#wind_dir = {0 : 'N', 1 : 'NNW', 2 : 'NW', 3 : 'WNW', 4 : 'W', 5 : 'WSW', 6 : 'SW', 7 : 'SSW', 8 : 'S', 9 : 'SSE', 10 : 'SE', 11 : 'ESE', 12 : 'E', 13 : 'ENE', 14 : 'NE', 15 : 'NNE', 16 : 'N'}
 ser = serial.Serial(serial_device, serial_baud, timeout=serial_timeout)
 print 'Starting collector daemon...'
 
@@ -50,11 +53,9 @@ lasttime = int(time.time()) - 1
 while True:
     if ((int(time.time())%period == 0) and (lasttime != int(time.time()))):
         ser.flush()
-        ser.write(' ') #TODO: Single byte generates response, this should be more specific
+        ser.write(' ')
         data = ast.literal_eval(ser.readline())
         lasttime = data['time'] = int(time.time())
-        #print 'Condition: {} Lasttime: {} DBTime: {} Real time: {}'.format(int(time.time())%resolution, lasttime, data['time'], time.time())
-        #print '{} Temperature: {}C, Humidity: {}%, Wind speed: {}km/h, Wind direction: {}, Rain (since last reading): {}mm'.format(int(time.time()), data['t'], data['h'], data['ws'], wind_dir[data['wd']], data['rain']*2.46)
         writeToDB(data)
         time.sleep(0.2)
     else:

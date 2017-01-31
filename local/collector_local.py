@@ -1,3 +1,7 @@
+#Michael Rodger 213085208
+#Cape Peninsula University of Technology
+#January 31 2017
+
 import threading
 import Queue
 import os
@@ -21,18 +25,9 @@ cherrypy.config.update({'server.socket_host': listen_ip,
 cardinal_points = ['N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE', 'S', 'SSW', 'SW', 'WSW', 'W', 'WNW', 'NW', 'NNW']
 queryData = []
 
-#Only works for numerical values
-#def average(avglist):
-#    print 'avglistlen:{}'.format(len(avglist))
-#    print 'avglist:{}'.format(avglist)
-#    return sum([avglist[x] for x in range(0, len(avglist))])/len(avglist)
-
-#def blockaverage(blavglist, blavgkey):
-#    return average([blavglist[x][blavgkey] for x in range(int(x*((len(blavglist)+1.0)/res)),int((x+1)*((len(blavglist)+1.0)/res)))])
-
+# Query all data for a given time range on the given db
 def querydball(dbname, start, end):
     data = []
-    # TODO: Catch filenotfound exception
     if not os.path.exists('db/{}'.format(dbname)):
         print 'Warning! {} not found'.format(dbname)
         return
@@ -47,9 +42,9 @@ def querydball(dbname, start, end):
     queryData.extend(data)
     conn.close()
 
-def querydbaggregated(dbname, start, end, ):
+# Query the average values for a time range on the given db
+def querydbaggregated(dbname, start, end):
     data = []
-    # TODO: Catch filenotfound exception
     if not os.path.exists('db/{}'.format(dbname)):
         print 'Warning! {} not found'.format(dbname)
         return
@@ -64,6 +59,7 @@ def querydbaggregated(dbname, start, end, ):
     queryData.extend(data)
     conn.close()
 
+# Generates a list of database filenames based on a time range
 def getdblist(start, end):
     dblist = []
     startdate = date.fromtimestamp(start)
@@ -78,6 +74,7 @@ def getdblist(start, end):
 
     return dblist
 
+# Multi-threaded fetch aggregated data
 def fetchAggregatedData(start, end):
     dblist = getdblist(start, end)
     print str(dblist)
@@ -107,6 +104,7 @@ def fetchAggregatedData(start, end):
 
     return queryDataSorted
 
+# Multi-threaded fetch all data
 def fetchAllData(start, end):
     # Generate a list of all required database files to be read
     dblist = getdblist(start, end)
@@ -136,21 +134,8 @@ def fetchAllData(start, end):
         queryDataSorted.append({'timestamp' : queryData[p]['timestamp'], 'windspeed' : queryData[p]['windspeed'], 'winddirection' : queryData[p]['winddirection'], 'temperature' : queryData[p]['temperature'], 'humidity' : queryData[p]['humidity'], 'rain' : queryData[p]['rain'] })
 
     return queryDataSorted
-# This is broken. Don't know why. TODO
-#    
-#    if len(queryDataSorted) > res:
-#        queryDataAveraged = []
-#        for x in range(0,res):
-#            print 'res:{} x:{} qdlen:{}'.format(res,x,len(queryDataSorted))
-#            queryDataAveraged.append({'timestamp' : int(average([queryDataSorted[y]['timestamp'] for y in range(int(x*((len(queryDataSorted)+1.0)/res)),int((x+1)*((len(queryDataSorted)+1.0)/res))-1)])),
-#                                    'windspeed' : '{0:.2f}'.format(average([queryDataSorted[y]['windspeed'] for y in range(int(x*((len(queryDataSorted)+1.0)/res)),int((x+1)*((len(queryDataSorted)+1.0)/res))-1)])),
-#                                    'winddirection' : int(average([queryDataSorted[y]['winddirection'] for y in range(int(x*((len(queryDataSorted)+1.0)/res)),int((x+1)*((len(queryDataSorted)+1.0)/res))-1)])),
-#                                    'temperature' : '{0:.2f}'.format(average([queryDataSorted[y]['temperature'] for y in range(int(x*((len(queryDataSorted)+1.0)/res)),int((x+1)*((len(queryDataSorted)+1.0)/res))-1)])),
-#                                    'humidity' : '{0:.2f}'.format(average([queryDataSorted[y]['humidity'] for y in range(int(x*((len(queryDataSorted)+1.0)/res)),int((x+1)*((len(queryDataSorted)+1.0)/res))-1)])),
-#                                    'rain' : average([queryDataSorted[y]['rain'] for y in range(int(x*((len(queryDataSorted)+1.0)/res)),int((x+1)*((len(queryDataSorted)+1.0)/res))-1)])})
-#        print time() - timethen
-#        return queryDataAveraged
 
+#Main function for the web interface
 class Collector(object):
     @cherrypy.expose
     def index(self):

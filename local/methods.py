@@ -1,4 +1,4 @@
-#Pseudocode (although valid Python) for some of the trickier tasks which I haven't gotten around to implementing
+#Pseudocode (although valid Python) for some of the trickier tasks. Mostly just a reference
 
 #Graphing methods for dealing with more data points than we want
 start = 82
@@ -48,3 +48,28 @@ test = [data[x]['two'] for x in range(0,len(data))]
 
 #Select average value per hour
 select min(time), avg(temperature) as 'average temperature' from weather group by strftime('%H', datetime(time, 'unixepoch', 'localtime'));
+
+#Shelved averaging code
+#Only works for numerical values
+#def average(avglist):
+#    print 'avglistlen:{}'.format(len(avglist))
+#    print 'avglist:{}'.format(avglist)
+#    return sum([avglist[x] for x in range(0, len(avglist))])/len(avglist)
+
+#def blockaverage(blavglist, blavgkey):
+#    return average([blavglist[x][blavgkey] for x in range(int(x*((len(blavglist)+1.0)/res)),int((x+1)*((len(blavglist)+1.0)/res)))])
+
+# This is broken. Don't know why. TODO
+#    
+#    if len(queryDataSorted) > res:
+#        queryDataAveraged = []
+#        for x in range(0,res):
+#            print 'res:{} x:{} qdlen:{}'.format(res,x,len(queryDataSorted))
+#            queryDataAveraged.append({'timestamp' : int(average([queryDataSorted[y]['timestamp'] for y in range(int(x*((len(queryDataSorted)+1.0)/res)),int((x+1)*((len(queryDataSorted)+1.0)/res))-1)])),
+#                                    'windspeed' : '{0:.2f}'.format(average([queryDataSorted[y]['windspeed'] for y in range(int(x*((len(queryDataSorted)+1.0)/res)),int((x+1)*((len(queryDataSorted)+1.0)/res))-1)])),
+#                                    'winddirection' : int(average([queryDataSorted[y]['winddirection'] for y in range(int(x*((len(queryDataSorted)+1.0)/res)),int((x+1)*((len(queryDataSorted)+1.0)/res))-1)])),
+#                                    'temperature' : '{0:.2f}'.format(average([queryDataSorted[y]['temperature'] for y in range(int(x*((len(queryDataSorted)+1.0)/res)),int((x+1)*((len(queryDataSorted)+1.0)/res))-1)])),
+#                                    'humidity' : '{0:.2f}'.format(average([queryDataSorted[y]['humidity'] for y in range(int(x*((len(queryDataSorted)+1.0)/res)),int((x+1)*((len(queryDataSorted)+1.0)/res))-1)])),
+#                                    'rain' : average([queryDataSorted[y]['rain'] for y in range(int(x*((len(queryDataSorted)+1.0)/res)),int((x+1)*((len(queryDataSorted)+1.0)/res))-1)])})
+#        print time() - timethen
+#        return queryDataAveraged

@@ -1,3 +1,2 @@
 0 * * * * /root/IPT400S/remote/db/sync.sh
 5 0 * * * /root/IPT400S/remote/copyclean.sh
-
