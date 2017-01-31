@@ -1,4 +1,8 @@
 # IPT400S
+## Michael Rodger 213085208
+### Cape Peninsula University of Technology
+### DEECE
+
 ## Remote weather station
 This repository forms the software portion of my B-Tech project.
 The aim is to build a remote weather station, with many features lacking in consumer weather stations. In practice, there will be a remote unit (located with the sensors) and a local unit (server) in some safe location.
@@ -13,7 +17,7 @@ Microcontroller for interfacing with sensors
 
 Single-board computer for reading data from microcontroller and pushing it to the server
 
-Standard desktop computer as the server
+Digital Ocean VPS as the server
 
 Python for most of the logic
 
